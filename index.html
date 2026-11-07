@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نظام إدارة الطلاب 2026</title>
+<style>
+*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#0f172a;color:#fff;padding:16px}h1{text-align:center;color:#38bdf8}.card{background:#1e293b;padding:16px;border-radius:16px;margin-bottom:14px}input,select{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:0;background:#0f172a;color:#fff}button{width:100%;padding:13px;border:0;border-radius:10px;background:#38bdf8;font-weight:bold;font-size:16px}table{width:100%;border-collapse:collapse;margin-top:10px}th,td{padding:10px;border-bottom:1px solid #334155;text-align:center;font-size:14px}.del{background:#ef4444;color:#fff;padding:6px 10px;border-radius:8px}.box{display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:center}.box div{background:#0f172a;padding:12px;border-radius:12px}.box b{font-size:22px;color:#38bdf8;display:block}
+</style>
+</head>
+<body>
+<h1>🎓 نظام إدارة الطلاب 2026</h1>
+<div class="box"><div>إجمالي الطلاب<b id="total">0</b></div><div>متوسط الدرجات<b id="avg">0</b></div></div>
+<div class="card">
+<h3>➕ إضافة طالب جديد</h3>
+<input id="name" placeholder="اسم الطالب">
+<input id="grade" type="number" placeholder="الدرجة من 100">
+<select id="cls"><option>الصف الأول</option><option>الصف الثاني</option><option>الصف الثالث</option></select>
+<button onclick="addStudent()">إضافة الطالب</button>
+</div>
+<div class="card">
+<input id="search" placeholder="🔍 ابحث باسم الطالب..." oninput="render()">
+<table><thead><tr><th>الاسم</th><th>الصف</th><th>الدرجة</th><th>حذف</th></tr></thead><tbody id="list"></tbody></table>
+</div>
+<script>
+let students=JSON.parse(localStorage.getItem('students')||'[]');
+function addStudent(){
+let n=document.getElementById('name').value.trim();
+let g=document.getElementById('grade').value;
+let c=document.getElementById('cls').value;
+if(!n||!g){alert('اكتب الاسم والدرجة');return}
+students.push({name:n,grade:Number(g),cls:c});
+localStorage.setItem('students',JSON.stringify(students));
+document.getElementById('name').value='';document.getElementById('grade').value='';
+render();
+}
+function del(i){students.splice(i,1);localStorage.setItem('students',JSON.stringify(students));render()}
+function render(){
+let q=document.getElementById('search').value;
+let f=students.filter(s=>s.name.includes(q));
+document.getElementById('list').innerHTML=f.map((s,i)=>`<tr><td>${s.name}</td><td>${s.cls}</td><td>${s.grade}</td><td><button class="del" onclick="del(${students.indexOf(s)})">حذف</button></td></tr>`).join('');
+document.getElementById('total').innerText=students.length;
+let a=students.length?Math.round(students.reduce((a,b)=>a+b.grade,0)/students.length):0;
+document.getElementById('avg').innerText=a;
+}
+render();
+</script>
+</body>
+</html>
